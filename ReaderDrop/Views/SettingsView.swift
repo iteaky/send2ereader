@@ -10,7 +10,6 @@ struct SettingsView: View {
                     Toggle("settings.optimize", isOn: $settings.optimizeEPUB)
                     Toggle("settings.crop", isOn: $settings.cropPDFMargins)
                     Toggle("settings.transliterate", isOn: $settings.transliterateFilename)
-                    Toggle("settings.keepFiles", isOn: $settings.keepSentFiles)
                 }
 
                 Section {
