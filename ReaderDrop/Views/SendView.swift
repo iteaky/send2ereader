@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 struct SendView: View {
     @EnvironmentObject private var settings: AppSettingsStore
+    @EnvironmentObject private var history: HistoryStore
     @StateObject private var model = SendViewModel()
     @State private var isPickingFile = false
 
@@ -42,7 +43,7 @@ struct SendView: View {
 
                 Section {
                     Button("send.button") {
-                        Task { await model.submit() }
+                        Task { await submitSelectedFile() }
                     }
                     .disabled(!model.canSend)
                 }
@@ -61,6 +62,20 @@ struct SendView: View {
         }
     }
 
+    private func submitSelectedFile() async {
+        guard let file = model.selectedFile else { return }
+        await model.submit()
+        guard case .success = model.state else { return }
+
+        history.add(HistoryItem(
+            kind: .file,
+            displayName: file.name,
+            detail: file.formattedSize,
+            storedFilePath: nil,
+            serverURL: "https://send2ereader.net"
+        ))
+    }
+
     @ViewBuilder
     private var statusSection: some View {
         switch model.state {
@@ -69,9 +84,20 @@ struct SendView: View {
         case .preparing, .processing:
             Section { ProgressView("send.processing") }
         case .success(let message):
-            Section { Label(message.isEmpty ? "send.success" : message, systemImage: "checkmark.circle.fill").foregroundStyle(.green) }
+            let text = message.isEmpty ? String(localized: "send.success") : message
+            Section {
+                Label {
+                    Text(text)
+                } icon: {
+                    Image(systemName: "checkmark.circle.fill")
+                }
+                .foregroundStyle(.green)
+            }
         case .failure(let message):
-            Section { Label(message, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.red) }
+            Section {
+                Label(message, systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.red)
+            }
         case .idle:
             EmptyView()
         }
