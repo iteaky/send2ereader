@@ -1,6 +1,10 @@
 import Foundation
 
 extension ShareSendViewModel {
+    func triggerSubmit() {
+        Task { await send() }
+    }
+
     func send() async {
         guard let file,
               let destination = URL(string: "https://send2ereader.net") else { return }
