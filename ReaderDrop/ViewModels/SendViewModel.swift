@@ -28,8 +28,10 @@ final class SendViewModel: ObservableObject {
 
     var isSending: Bool {
         switch state {
-        case .preparing, .uploading, .processing: true
-        default: false
+        case .preparing, .uploading, .processing:
+            return true
+        default:
+            return false
         }
     }
 
@@ -45,8 +47,10 @@ final class SendViewModel: ObservableObject {
     var canSend: Bool {
         guard ReaderKey.isValid(key), !isSending else { return false }
         switch mode {
-        case .file: return selectedFile != nil
-        case .link: return validLink != nil
+        case .file:
+            return selectedFile != nil
+        case .link:
+            return validLink != nil
         }
     }
 
