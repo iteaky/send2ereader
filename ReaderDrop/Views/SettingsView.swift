@@ -6,12 +6,6 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("settings.server.title") {
-                    TextField("settings.server.placeholder", text: $settings.serverURLString)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.URL)
-                }
-
                 Section("settings.defaults.title") {
                     Toggle("settings.optimize", isOn: $settings.optimizeEPUB)
                     Toggle("settings.crop", isOn: $settings.cropPDFMargins)
@@ -20,6 +14,7 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    LabeledContent("settings.server.title", value: "send2ereader.net")
                     NavigationLink("settings.about.title") { AboutView() }
                     Button("settings.reset", role: .destructive) { settings.reset() }
                 }
